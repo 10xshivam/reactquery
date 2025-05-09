@@ -1,4 +1,3 @@
-import React from "react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { Home } from "./pages/Home";
 import { FetchOld } from "./pages/FetchOld";
@@ -8,6 +7,7 @@ import { InfiniteScroll } from "./pages/InfiniteScroll";
 import { MainLayout } from "./components/layout/MainLayout";
 import "./App.css";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 
 const router = createBrowserRouter([
   {
@@ -43,6 +43,7 @@ export const App = () => {
   return (
     <QueryClientProvider client={queryClient} >
       <RouterProvider router={router} />
+      <ReactQueryDevtools initialIsOpen={false} />
     </QueryClientProvider>
   );
 };
