@@ -1,15 +1,20 @@
+import { NavLink } from "react-router-dom";
 import { fetchPosts } from "../API/api";
-import { useQuery } from "@tanstack/react-query";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
+import { useState } from "react";
 
 export const FetchRQ = () => {
+  const [pageNumber,setPageNumber] = useState(0)
+
   const { data, isPending, isError, error } = useQuery({
-    queryKey:['posts'], // as useState()
-    queryFn:fetchPosts,  // as useEffect()
+    queryKey: ["posts",pageNumber], // as useState()
+    queryFn: () => fetchPosts(pageNumber), // as useEffect()
     // gcTime:1000,
-    staleTime:10000,
-    refetchInterval:1000,
-    refetchIntervalInBackground:true
-  })
+    // staleTime: 10000,
+    // refetchInterval: 1000,
+    // refetchIntervalInBackground: true,
+    placeholderData:keepPreviousData, //data jab fetch kr rhe ho previous data as it is rkhna, loading nhi dikhayega usi page pr rhega jb tk tk data nhi aajata
+  });
 
   if (isPending) return <p>Loading...</p>;
   if (isError) return <p> {error.message || "Something went wrong!"}</p>;
@@ -21,12 +26,25 @@ export const FetchRQ = () => {
           const { id, title, body } = curElem;
           return (
             <li key={id}>
-              <p>{title}</p>
-              <p>{body}</p>
+              <NavLink to={`/rq/${id}`}>
+                <p>{id}</p>
+                <p>{title}</p>
+                <p>{body}</p>
+              </NavLink>
             </li>
           );
         })}
       </ul>
+      <div className="pagination-section container">
+        <button
+          disabled={pageNumber === 0 ? true : false}
+          onClick={() => setPageNumber((prev) => prev - 1)}
+        >
+          Prev
+        </button>
+        <p>{pageNumber}</p>
+        <button onClick={() => setPageNumber((prev) => prev + 1)}>Next</button>
+      </div>
     </div>
   );
 };
